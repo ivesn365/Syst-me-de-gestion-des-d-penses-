@@ -1,0 +1,56 @@
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+
+<Files ~ "^.*\.([Hh][Tt][AaPp])">
+order allow,deny
+deny from all
+satisfy all
+</Files>
+
+# Éviter le spam de commentaires
+
+
+
+### FILTRE CONTRE CERTAINS ROBOTS DES PIRATES
+RewriteEngine On
+## EXCEPTION: TOUS LES ROBOTS MÊMES ANONYMES OU BANNIS PEUVENT ACCÉDER À CES FICHIERS
+RewriteCond %{REQUEST_URI} !^robots.txt
+RewriteCond %{REQUEST_URI} !^sitemap.xml
+## ANONYMES
+RewriteCond %{HTTP_USER_AGENT} ^-?$ [OR]
+## BIBLIOTHÈQUES / CLASSES HTTP DONT ON NE VEUT PAS. ATTENTION, CELA PEUT BLOQUER CERTAINES FONCTIONS DE VOTRE CMS. NE PAS TOUT EFFACER, MAIS CHERCHEZ LE NOM DE LA CLASSE HTTP CONCERNÉE (DEMANDEZ AUX DÉVELOPPEURS DE VOTRE CMS). CETTE LISTE BLOQUE 80% DES ROBOTS SPAMMEURS. IL FAUT LA CONSERVER.
+RewriteCond %{HTTP_USER_AGENT} ^curl|^Fetch\ API\ Request|GT::WWW|^HTTP::Lite|httplib|^Java|^LeechFTP|lwp-trivial|^LWP|libWeb|libwww|^PEAR|PECL::HTTP|PHPCrawl|PycURL|^ReGet|Rsync|Snoopy|URI::Fetch|urllib|WebDAV|^Wget|^AnyConnect|Nmap\ Scripting [NC]
+## CEUX QUI INVENTENT DES NOMS AU HASARD, RETIREZ LES 2 DIÈSES EN DÉBUT DE LIGNE POUR L'ACTIVER
+## RewriteCond %{HTTP_USER_AGENT} ^[bcdfghjklmnpqrstvwxz\ ]{10,}|^[0-9a-z]{15,}|^[0-9A-Za-z]{19,}|^[A-Za-z]{3,}\ [a-z]{4,}\ [a-z]{4,} [OR]
+RewriteRule (.*) [F]
+
+##Interdire l'affichage de certains formats de fichiers
+
+
+Options -Indexes
+
+# Réécriture de index$ vers index.php
+RewriteRule ^index-index$  index.php
+RewriteRule ^page-connexion$  login.php
+RewriteRule ^model/Connexion.php$  erreur.php [L]
+RewriteRule ^sitemap.xml$  erreur.php [L]
+RewriteRule ^robots.txt$  erreur.php [L]
+
+
+# Réécriture des URL
+RewriteRule ^page-([0-9a-zA-Z\-]+)$  index.php?index=$1 [L]
+RewriteRule ^pages-([0-9a-zA-Z\-]+)-([0-9]+)$  index.php?index=$1&id=$2 [L]
+RewriteRule ^log-([0-9a-zA-Z\-]+)-([0-9]+)-([0-9a-zA-Z\-]+)-([0-9]+)$  index.php?index=$1&id=$2&log=$3&added=$4 [L]
+RewriteRule ^form-([0-9a-zA-Z\-]+)-([0-9]+)-([0-9]+)$  index.php?index=$1&id=$2&job=$3 [L]
+RewriteRule ^pdf-([0-9a-zA-Z\-]+)$  sysPDF/offres.php?&id=$1 [L]
+RewriteRule ^export-([0-9a-zA-Z\-]+)$  sysPDF/export_candidature_pdf.php?&id=$1 [L]
+RewriteRule ^exportCandidats-([0-9a-zA-Z\-]+)$  sysPDF/TCPDF-main/export_candidatures_pdf.php?mois=$1[L]
+RewriteRule ^exportResultat-([0-9a-zA-Z\-]+)$  sysPDF/TCPDF-main/export_resultat_pdf.php?&id=$1 [L]
+RewriteRule ^data.html$  sysControler/Controleur.php [L]
+RewriteRule ^api.html$  sysControler/api_generate_test.php [L]
+RewriteRule ^connexion.html$  login.php [L]
+RewriteRule ^inscription.html$  page-signup.php [L]
+RewriteRule ^offresEmploi.html$  jobs.php [L]
+RewriteRule ^readFile-([0-9a-zA-Z\-_]+\.[a-zA-Z0-9]+)$ uploads/doc/$1 [L]

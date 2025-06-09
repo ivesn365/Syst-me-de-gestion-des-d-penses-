@@ -8,7 +8,7 @@ class Connexion
         try{
 
             $pdo_options[PDO::ATTR_ERRMODE]=PDO::ERRMODE_EXCEPTION;
-            $connexion  = new PDO('mysql:host=localhost;dbname=recrutement;charset=utf8mb4','root','',$pdo_options);
+            $connexion  = new PDO('mysql:host=localhost;dbname=gestion_depense;charset=utf8mb4','root','',$pdo_options);
             return $connexion;
 
         }

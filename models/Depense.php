@@ -9,6 +9,7 @@ class Depense {
     private $chauffeur_id;
     private $statut;
     private $date_creation;
+    private $devise;
 
     /**
      * @param $id
@@ -20,8 +21,9 @@ class Depense {
      * @param $chauffeur_id
      * @param $statut
      * @param $date_creation
+     * @param $devise
      */
-    public function __construct($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_creation)
+    public function __construct($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_creation, $devise)
     {
         $this->id = $id;
         $this->type = $type;
@@ -32,6 +34,7 @@ class Depense {
         $this->chauffeur_id = $chauffeur_id;
         $this->statut = $statut;
         $this->date_creation = $date_creation;
+        $this->devise = $devise;
     }
 
 
@@ -44,6 +47,16 @@ class Depense {
     public function getChauffeurId() { return $this->chauffeur_id; }
     public function getStatut() { return $this->statut; }
 
+
+
+    /**
+     * @return mixed
+     */
+    public function getDevise()
+    {
+        return $this->devise;
+    }
+
     /**
      * @return mixed
      */
@@ -55,7 +68,7 @@ class Depense {
 
 
     public function ajouter() {
-        return Query::CRUD("INSERT INTO depenses (type_depense, montant, description, date_depense, vehicule_id, chauffeur_id, statut) VALUES ('$this->type', '$this->montant', '$this->description', '$this->date', '$this->vehicule_id', '$this->chauffeur_id', '$this->statut')");
+        return Query::CRUD("INSERT INTO depenses (type_depense, montant, description, date_depense, vehicule_id, chauffeur_id, statut,devise) VALUES ('$this->type', '$this->montant', '$this->description', '$this->date', '$this->vehicule_id', '$this->chauffeur_id', '$this->statut', '$this->devise')");
     }
 
     public static function afficher($query) {
@@ -76,10 +89,11 @@ class Depense {
             $montant = $i->montant;
             $date_create = $i->date_create;
             $date = $i->date_depense;
-            $type = $i->type_depense?$key->decrypt($i->type_depense):null;
-            $description = $i->description?$key->decrypt($i->description):null;
-            $statut = $i->statut?$key->decrypt($i->statut):null;
-            return new Depense($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_create);
+            $type = $i->type_depense?$key->decrypt($i->type_depense):'';
+            $devise = $i->devise?$key->decrypt($i->devise):'';
+            $description = $i->description?$key->decrypt($i->description):'';
+            $statut = $i->statut?$key->decrypt($i->statut):'';
+            return new Depense($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_create, $devise);
         }
     }
 
@@ -94,11 +108,12 @@ class Depense {
                 $montant = $i->montant;
                 $date_create = $i->date_create;
                 $date = $i->date_depense;
-                $type = $i->type_depense?$key->decrypt($i->type_depense):null;
-                $description = $i->description?$key->decrypt($i->description):null;
-                $statut = $i->statut?$key->decrypt($i->statut):null;
+                $type = $i->type_depense?$key->decrypt($i->type_depense):'';
+                $description = $i->description?$key->decrypt($i->description):'';
+                $statut = $i->statut?$key->decrypt($i->statut):'';
+                $devise = $i->devise?$key->decrypt($i->devise):'';
 
-                $tab[] = new Depense($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_create);
+                $tab[] = new Depense($id, $type, $montant, $description, $date, $vehicule_id, $chauffeur_id, $statut, $date_create,$devise);
             }
         }
         return $tab;
