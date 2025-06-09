@@ -83,15 +83,16 @@
       url: 'data.html',
       data: { username, password },
       success: function(response) {
-        if (response === 'success') {
+        if (response.success) {
           $('#login-msg').html('<div class="alert alert-success">Connexion réussie. Redirection...</div>');
           setTimeout(() => window.location.href = 'page-accueil', 1500);
         } else {
-          $('#login-msg').html('<div class="alert alert-danger">'+response+'</div>');
+          $('#login-msg').html('<div class="alert alert-danger">'+response.message+'</div>');
         }
       },
-      error: function() {
-        $('#login-msg').html('<div class="alert alert-danger">Erreur serveur.</div>');
+      error: function(xhr, status, error) {
+        alert('Erreur AJAX : ' + error);
+        console.log(xhr.responseText); // Pour debug
       }
     });
   });

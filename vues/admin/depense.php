@@ -31,7 +31,12 @@
                                 </thead>
                                 <tbody>
                                 <?php
-                                $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `vehicule_id`!=0 ORDER BY id_depense DESC");
+                                if ($_SESSION['sys_role_user'] == 'admin') {
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `vehicule_id`!=0 ORDER BY id_depense DESC");
+                                }else{
+                                    $idUser = $_SESSION['sys_id_user'];
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `vehicule_id`!=0  AND statut='$idUser' ORDER BY id_depense DESC");
+                                }
                                 if ($depense){
                                     $j = 1;
                                     foreach ($depense as $i){
@@ -79,7 +84,13 @@
                                 </thead>
                                 <tbody>
                                 <?php
-                                $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`!=0 ORDER BY id_depense DESC");
+                                if ($_SESSION['sys_role_user'] == 'admin') {
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`!=0 ORDER BY id_depense DESC");
+                                }else{
+                                    $idUser = $_SESSION['sys_id_user'];
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`!=0 AND statut='$idUser' ORDER BY id_depense DESC");
+
+                                }
                                 if ($depense){
                                     $j = 1;
                                     foreach ($depense as $i){
@@ -127,7 +138,12 @@
                                 </thead>
                                 <tbody>
                                 <?php
-                                $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`=0 AND `vehicule_id`=0 ORDER BY id_depense DESC");
+                                if ($_SESSION['sys_role_user'] == 'admin') {
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`=0 AND `vehicule_id`=0 ORDER BY id_depense DESC");
+                                }else{
+                                    $idUser = $_SESSION['sys_id_user'];
+                                    $depense = Depense::affichers("SELECT * FROM `depenses` WHERE `chauffeur_id`=0 AND `vehicule_id`=0 AND statut='$idUser' ORDER BY id_depense DESC");
+                                }
                                 if ($depense){
 
                                     $j = 1;

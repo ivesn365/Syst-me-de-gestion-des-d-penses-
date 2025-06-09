@@ -1,4 +1,5 @@
 <?php
+    session_start();
     require_once ("models/Connexion.php");
     require_once ("models/Query.php");
     require_once ("models/AES.php");

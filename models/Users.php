@@ -72,7 +72,11 @@ class Users
         if ($query)
         {
             while ($i = $query->fetch(PDO::FETCH_OBJ)){
-                $tab[] = new Users($i->id, $key->decrypt($i->username), 1, $key->decrypt($i->role), $i->status);
+                $id = $i->id;
+                $status = $i->status;
+                $username = $i->username? $key->decrypt($i->username):'';
+                $role = $i->username? $key->decrypt($i->role):'';
+                $tab[] = new Users($id, $username, '',  $role, $status);
             }
             return $tab;
         }
@@ -82,10 +86,11 @@ class Users
         if ($query)
         {
             $i = $query->fetch(PDO::FETCH_OBJ);
-            return new Users($i->id, $key->decrypt($i->username), 1,   $key->decrypt($i->role), $i->status);
-
-
-
+            $id = $i->id;
+            $status = $i->status;
+            $username = $i->username? $key->decrypt($i->username):'';
+            $role = $i->username? $key->decrypt($i->role):'';
+            return new Users($id, $username, '',  $role, $status);
         }
     }
     public static function afficher($query)

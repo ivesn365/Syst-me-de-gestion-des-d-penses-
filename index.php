@@ -15,6 +15,8 @@ if($_SESSION['sys_role_user']){
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="manifest" href="/manifest.json">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -99,6 +101,11 @@ if($_SESSION['sys_role_user']){
                 <li class="nav-item">
                     <a class="nav-link" href="page-users"><i class="bi bi-person-badge me-2"></i> Utilisateur</a>
                 </li>
+                <li class="nav-item">
+                    <a href="data.html?logout=true" class="nav-link text-white">
+                        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                    </a>
+                </li>
             </ul>
         </nav>
 
@@ -107,7 +114,10 @@ if($_SESSION['sys_role_user']){
                 <i class="bi bi-list"></i> Menu
             </button>
             <div class="container-fluid">
-    <?php
+                <button id="installBtn" style="display:none;">Installer l'application</button>
+
+
+                <?php
     if(isset($_GET['index'])){
         if ($_GET['index'] == 'accueil') include_once ("vues/admin/accueil.php");
         elseif ($_GET['index'] == 'vehicule') include_once ("vues/admin/vehicule.php");
@@ -125,6 +135,9 @@ if($_SESSION['sys_role_user']){
 
     ?>
 
+                <a href="javascript:history.back()" class="btn btn-outline-secondary mt-3">
+                    ⬅ Retour
+                </a>
 
     <footer class="text-center mt-5 text-muted">
         <small>&copy; <?= date('Y') ?> - Gestion des dépenses | Tous droits réservés | produit par <a href="https://ihs-rdc.com/">IHS-RDC</a></small>
@@ -132,7 +145,7 @@ if($_SESSION['sys_role_user']){
             </div>
         </main>
 </div>
-    <?php }elseif ($_SESSION['sys_role_user'] == 'admin'){ ?>
+    <?php }elseif ($_SESSION['sys_role_user'] == 'AUTRE_ROLE_SYS'){ ?>
         <div class="row">
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar px-3 py-4" id="sidebarMenu">
@@ -141,17 +154,14 @@ if($_SESSION['sys_role_user']){
                     <li class="nav-item">
                         <a class="nav-link active" href="page-accueil"><i class="bi bi-speedometer2 me-2"></i> Tableau de bord</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="page-vehicule"><i class="bi bi-truck me-2"></i> Véhicules</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="page-chauffeurs"><i class="bi bi-person-badge me-2"></i> Chauffeurs</a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="page-depense"><i class="bi bi-cash-coin me-2"></i> Dépenses</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="page-users"><i class="bi bi-person-badge me-2"></i> Utilisateur</a>
+                        <a href="data.html?logout=true" class="nav-link text-white">
+                            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -161,9 +171,12 @@ if($_SESSION['sys_role_user']){
                     <i class="bi bi-list"></i> Menu
                 </button>
                 <div class="container-fluid">
+                    <button id="installBtn" style="display:none;">Installer l'application</button>
+
+
                     <?php
                     if(isset($_GET['index'])){
-                        if ($_GET['index'] == 'accueil') include_once ("vues/admin/accueil.php");
+                        if ($_GET['index'] == 'accueil') include_once ("vues/admin/depense.php");
                         elseif ($_GET['index'] == 'vehicule') include_once ("vues/admin/vehicule.php");
                         elseif ($_GET['index'] == 'formVehicule') include_once ("vues/admin/formVehicule.php");
                         elseif ($_GET['index'] == 'chauffeurs') include_once ("vues/admin/chauffeur.php");
@@ -173,11 +186,14 @@ if($_SESSION['sys_role_user']){
                         elseif ($_GET['index'] == 'formDepenseVehicule') include_once ("vues/admin/formDepenseVehicule.php");
                         elseif ($_GET['index'] == 'formDepenseAutre') include_once ("vues/admin/formDepense.php");
                         elseif ($_GET['index'] == 'users') include_once ("vues/admin/users.php");
-                        else include_once ("vues/admin/accueil.php");
+                        else include_once ("vues/admin/depense.php");
 
-                    }else include_once ("vues/admin/accueil.php");
+                    }else include_once ("vues/admin/depense.php");
 
                     ?>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary mt-3">
+                        ⬅ Retour
+                    </a>
 
 
                     <footer class="text-center mt-5 text-muted">
@@ -199,7 +215,70 @@ if($_SESSION['sys_role_user']){
         sidebar.classList.toggle('show');
         overlay.classList.toggle('show');
     }
+
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+    });
+
+        installBtn.addEventListener('click', () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+        console.log('L\'utilisateur a accepté l\'installation');
+    } else {
+        console.log('L\'utilisateur a refusé l\'installation');
+    }
+        deferredPrompt = null;
+    });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Créer dynamiquement l'élément du spinner
+        const spinner = document.createElement("div");
+        spinner.id = "loading-spinner";
+        spinner.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    ">
+      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+    </div>
+  `;
+        spinner.style.display = "none";
+        document.body.appendChild(spinner);
+
+        // Affiche le spinner lors du clic sur un lien
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function (e) {
+                const href = link.getAttribute("href");
+                if (href && !href.startsWith("#") && !href.startsWith("javascript:") && !link.hasAttribute("target")) {
+                    spinner.style.display = "block";
+                }
+            });
+        });
+
+        // Masque le spinner quand la page s'affiche
+        window.addEventListener("pageshow", function () {
+            spinner.style.display = "none";
+        });
+    });
 </script>
+
+</script>
+
 </body>
 </html>
 <?php }else header("Location:login.html");?>

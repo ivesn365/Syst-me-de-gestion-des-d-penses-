@@ -9,7 +9,7 @@
     <div class="modal fade" id="modalVehicule" tabindex="-1" aria-labelledby="modalVehiculeLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
-                <form id="formUsers">
+                <form action="data.html" method="post">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalVehiculeLabel">Ajouter un utilisateur</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-success">Enregistrer</button>
+                        <button type="submit" class="btn btn-success" name="btn_new_user">Enregistrer</button>
                     </div>
                 </form>
             </div>
@@ -33,7 +33,7 @@
 
     <?php
 
-    $users = Users::afficher2("SELECT * FROM users");
+    $users = Users::afficher2("SELECT * FROM users WHERE id!=5");
     if ($users){ ?>
         <!-- Barre de recherche -->
         <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher un produit...">
@@ -55,8 +55,10 @@
                 <tr>
                     <td><?=$j++?></td>
                     <td><?=$i->getUsername()?></td>
-                    <td><?=$i->getRole()?></td>
-                    <td hidden><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal<?=$i->getIdVetement()?>">Modifier</button></td>
+                    <td><?php
+                       if("AUTRE_ROLE_SYS" == $i->getRole()) echo 'Utilisateur';
+                       ?></td>
+                    <td hidden><button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#myModal">Modifier</button></td>
                 </tr>
             <?php } ?>
             </tbody>
@@ -69,7 +71,7 @@
 
 </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // Tri des colonnes
     function sortTable(n) {
@@ -95,19 +97,21 @@
         $(document).ready(function () {
         $('#formUsers').on('submit', function (e) {
             e.preventDefault();
-
+            alert("oiffu")
             $.ajax({
                 url: 'data.html',
                 method: 'POST',
-                data: $(this).serialize() + '&action=ajouterUsers',
+                data: $(this).serialize(),
                 success: function (response) {
                     alert('Véhicule enregistré avec succès !');
                     $('#modalVehicule').modal('hide');
                     $('#formUsers')[0].reset();
+                    location.reload()
                     // Optionnel : rafraîchir le tableau
                 },
-                error: function (xhr) {
-                    alert('Erreur lors de l’enregistrement.');
+                error: function(xhr, status, error) {
+                    alert('Erreur AJAX : ' + error);
+                    console.log(xhr.responseText); // Pour debug
                 }
             });
         });
